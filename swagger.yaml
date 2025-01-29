@@ -1,0 +1,436 @@
+openapi: 3.0.0
+info:
+  title: Product and Category API
+  description: API for managing products and categories, with user authentication
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:3000"
+tags:
+  - name: "Auth"
+    description: "Authentication operations"
+  - name: "Categories"
+    description: "Category operations"
+  - name: "Products"
+    description: "Product operations"
+
+paths:
+  /register:
+    post:
+      tags:
+        - "Auth"
+      summary: "Register a new user"
+      description: "This endpoint allows new users to register."
+      operationId: "registerUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: "User registered successfully"
+        '400':
+          description: "Invalid input"
+  /login:
+    post:
+      tags:
+        - "Auth"
+      summary: "User login"
+      description: "This endpoint allows registered users to login."
+      operationId: "loginUser"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: "Login successful"
+        '400':
+          description: "Invalid input"
+  /categories:
+    get:
+      tags:
+        - "Categories"
+      summary: "Get all categories"
+      operationId: "getAllCategories"
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: "List of categories"
+        '401':
+          description: "Unauthorized"
+    post:
+      tags:
+        - "Categories"
+      summary: "Create a new category"
+      operationId: "createCategory"
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: "Category created successfully"
+        '401':
+          description: "Unauthorized"
+        '422':
+          description: "Category ID not found"
+  /categories/{id}:
+    get:
+      tags:
+        - "Categories"
+      summary: "Get category by ID"
+      operationId: "getCategoryById"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Category ID"
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Category details"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Category not found"
+    put:
+      tags:
+        - "Categories"
+      summary: "Update category"
+      operationId: "updateCategory"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Category ID"
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: "Category updated successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Category not found"
+    delete:
+      tags:
+        - "Categories"
+      summary: "Delete category"
+      operationId: "deleteCategory"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Category ID"
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Category deleted successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Category not found"
+  /products/category/{id}:
+    get:
+      tags:
+        - "Products"
+      summary: "Get product by Category ID"
+      operationId: "getProductByCategoryId"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Category ID"
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Product details"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Category not found"
+  /active/products:
+    get:
+      tags:
+        - "Products"
+      summary: "Get all active products"
+      operationId: "getAllActiveProducts"
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: "List of products"
+        '401':
+          description: "Unauthorized"       
+  /products:
+    get:
+      tags:
+        - "Products"
+      summary: "Get all products"
+      operationId: "getAllProducts"
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: "List of products"
+        '401':
+          description: "Unauthorized"
+    post:
+      tags:
+        - "Products"
+      summary: "Create a new product"
+      operationId: "createProduct"
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                currency:
+                  type: string
+                quantity:
+                  type: integer
+                active:
+                  type: boolean
+                category_id:
+                  type: integer
+      responses:
+        '201':
+          description: "Product created successfully"
+        '401':
+          description: "Unauthorized"
+  /products/{id}:
+    get:
+      tags:
+        - "Products"
+      summary: "Get product by ID"
+      operationId: "getProductById"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Product ID"
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Product details"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Product not found"
+    put:
+      tags:
+        - "Products"
+      summary: "Update product"
+      operationId: "updateProduct"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Product ID"
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                price:
+                  type: number
+                  format: float
+                currency:
+                  type: string
+                quantity:
+                  type: integer
+                active:
+                  type: boolean
+                category_id:
+                  type: integer
+      responses:
+        '200':
+          description: "Product updated successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Product not found"
+    delete:
+      tags:
+        - "Products"
+      summary: "Delete product"
+      operationId: "deleteProduct"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Product ID"
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: "Product deleted successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Product not found"
+  /products/soft/{id}:
+    put:
+      tags:
+        - "Products"
+      summary: "Soft delete product"
+      operationId: "softDelete"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Product ID"
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Product soft deleted successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Product not found"
+  /products/json/{id}:
+    put:
+      tags:
+        - "Products"
+      summary: "Update product JSON data"
+      operationId: "updateJsonData"
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          description: "Product ID"
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+      responses:
+        '200':
+          description: "Product JSON updated successfully"
+        '401':
+          description: "Unauthorized"
+        '404':
+          description: "Product not found"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Category:
+      type: object
+      properties:
+        name:
+          type: string
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        currency:
+          type: string
+        quantity:
+          type: integer
+        active:
+          type: boolean
+        category_id:
+          type: integer
+
+security:
+  - BearerAuth: []
+
